@@ -40,63 +40,63 @@ function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-100 to-yellow-100 flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white/30 backdrop-blur-md py-4 px-8 rounded-full shadow-md mx-auto w-full max-w-4xl mt-4 mb-6">
+      <nav className="bg-white/80 backdrop-blur-md py-4 px-8 rounded-full shadow-lg mx-auto w-full max-w-4xl mt-5 mb-6 border border-amber-200/50">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-indigo-600">WeatherAi</Link>
+          <Link to="/" className="text-2xl font-bold text-amber-800">WeatherAi</Link>
           <div className="flex space-x-6">
-            <a href="#features" className="text-gray-600 hover:text-indigo-300 font-medium">Features</a>
-            <Link to="/about" className="text-gray-600 hover:text-indigo-300 font-medium">About</Link>
+            <a href="#features" className="text-amber-700 hover:text-amber-900 font-medium transition-colors">Features</a>
+            <Link to="/about" className="text-amber-700 hover:text-amber-900 font-medium transition-colors">About</Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="flex-grow flex flex-col justify-center items-center text-center py-20 px-4">
-        <h1 className="text-5xl font-extrabold text-indigo-800 mb-4 animate-fade-in">
+      <section className="flex-grow flex flex-col justify-center items-center text-center mt-6 py-28 px-4">
+        <h1 className="text-5xl font-extrabold text-amber-900 mb-4 animate-fade-in">
           Discover the Future of Weather Forecasting
         </h1>
-        <p className="text-xl text-gray-700 mb-8 max-w-2xl">
+        <p className="text-xl text-amber-800 mb-8 max-w-2xl">
           WeatherAi uses cutting-edge AI to provide precise, real-time weather insights for any location worldwide.
         </p>
-        <div className="flex items-center bg-white rounded-full shadow-lg p-2 w-full max-w-md">
+        <div className="flex items-center bg-white/90 backdrop-blur-md rounded-full shadow-lg p-2 w-full max-w-md border border-amber-300/50">
           <input
             type="text"
-            placeholder="Enter location (e.g., New York)"
-            className="flex-grow px-4 py-2 outline-none"
+            placeholder="Enter location (e.g., New Delhi)"
+            className="flex-grow px-4 py-2 outline-none bg-transparent text-amber-900 placeholder-amber-600"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
-          <button className="bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700">
+          <button className="bg-amber-600 text-white p-3 rounded-full hover:bg-amber-700 transition-colors">
             <Search className="w-5 h-5" />
           </button>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="bg-white py-16 px-6">
-        <h2 className="text-3xl font-bold text-center text-indigo-800 mb-12">Features</h2>
+      <section id="features" className="bg-white/20 py-16 px-6">
+        <h2 className="text-5xl font-bold text-center text-amber-900 mb-12">Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {features.map((feature, index) => (
             <div key={index} className="flex justify-center">
               <TiltedCard
                 imageSrc=""
-                altText={feature.title}
+                altText=""
                 captionText=""
                 containerHeight="220px"
                 containerWidth="100%"
-                imageHeight="220px"
+                imageHeight="200px"
                 imageWidth="100%"
                 scaleOnHover={1.06}
                 rotateAmplitude={10}
                 showMobileWarning={false}
                 showTooltip={false}
                 overlayContent={
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-xl h-full w-full flex flex-col justify-center items-center text-center">
+                  <div className="bg-gradient-to-br from-amber-100/80 to-orange-200/80 backdrop-blur-md p-6 rounded-xl h-full w-full flex flex-col justify-center items-center text-center border border-amber-300/50">
                     <div className="flex justify-center mb-4">{feature.icon}</div>
-                    <h3 className="text-xl font-semibold text-indigo-700 mb-2">{feature.title}</h3>
-                    <p className="text-gray-600">{feature.description}</p>
+                    <h3 className="text-xl font-semibold text-amber-900 mb-2">{feature.title}</h3>
+                    <p className="text-amber-800">{feature.description}</p>
                   </div>
                 }
                 displayOverlayContent={true}
@@ -107,30 +107,30 @@ function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-br from-slate-800 via-indigo-900 to-slate-900 text-white">
+      <footer className="bg-gradient-to-br from-amber-200 via-orange-200 to-yellow-200">
         <div className="max-w-7xl mx-auto px-6 py-16">
           {/* Main Footer Content */}
           <div className="flex flex-col lg:flex-row gap-12 mb-12">
             {/* Company Info - Takes left side */}
             <div className="lg:w-1/3 space-y-6">
               <div className="flex items-center space-x-2">
-                <h3 className="text-2xl font-bold text-white">WeatherAi</h3>
+                <h3 className="text-2xl font-bold text-amber-900">WeatherAi</h3>
               </div>
-              <p className="text-gray-300 leading-relaxed text-lg max-w-md">
+              <p className="text-amber-800 leading-relaxed text-lg max-w-md">
                 Revolutionizing weather forecasting with cutting-edge AI technology. 
                 Get accurate, real-time weather insights for any location worldwide.
               </p>
               <div className="flex space-x-4">
-                <a href="https://github.com/cyphering101Raman" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                <a href="https://github.com/cyphering101Raman" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                   <Github className="w-6 h-6" />
                 </a>
-                <a href="https://x.com/Raman__Gupta" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                <a href="https://x.com/Raman__Gupta" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                   <Twitter className="w-6 h-6" />
                 </a>
-                <a href="https://www.linkedin.com/in/raman--gupta/" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                <a href="https://www.linkedin.com/in/raman--gupta/" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                   <Linkedin className="w-6 h-6" />
                 </a>
-                <a href="https://www.instagram.com/me.ramangupta/" className="text-gray-400 hover:text-blue-400 transition-colors duration-300">
+                <a href="https://www.instagram.com/me.ramangupta/" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                   <Instagram className="w-6 h-6" />
                 </a>
               </div>
@@ -140,23 +140,23 @@ function Home() {
             <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Quick Links */}
               <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-white">Quick Links</h4>
+                <h4 className="text-lg font-semibold text-amber-900">Quick Links</h4>
                 <ul className="space-y-3">
                   <li>
-                    <Link to="/" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    <Link to="/" className="text-amber-700 hover:text-amber-900 transition-colors duration-300 flex items-center">
+                      <span className="w-2 h-2 bg-amber-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       Home
                     </Link>
                   </li>
                   <li>
-                    <a href="#features" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    <a href="#features" className="text-amber-700 hover:text-amber-900 transition-colors duration-300 flex items-center">
+                      <span className="w-2 h-2 bg-amber-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       Features
                     </a>
                   </li>
                   <li>
-                    <Link to="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    <Link to="#" className="text-amber-700 hover:text-amber-900 transition-colors duration-300 flex items-center">
+                      <span className="w-2 h-2 bg-amber-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       About Us
                     </Link>
                   </li>
@@ -165,20 +165,20 @@ function Home() {
 
               {/* Support */}
               <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-white">Support</h4>
+                <h4 className="text-lg font-semibold text-amber-900">Support</h4>
                 <ul className="space-y-3">
                   <li>
-                    <Link to="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">
+                    <Link to="#" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                       Help Center
                     </Link>
                   </li>
                   <li>
-                    <Link to="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">
+                    <Link to="#" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                       FAQ
                     </Link>
                   </li>
                   <li>
-                    <Link to="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300">
+                    <Link to="#" className="text-amber-700 hover:text-amber-900 transition-colors duration-300">
                       API Documentation
                     </Link>
                   </li>
@@ -187,18 +187,18 @@ function Home() {
 
               {/* Contact Info */}
               <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-white">Get in Touch</h4>
+                <h4 className="text-lg font-semibold text-amber-900">Get in Touch</h4>
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-gray-300">
-                    <Mail className="w-5 h-5 text-blue-400" />
+                  <div className="flex items-center space-x-3 text-amber-700">
+                    <Mail className="w-5 h-5 text-amber-600" />
                     <span className="text-sm">support@weatherai.com</span>
                   </div>
-                  <div className="flex items-center space-x-3 text-gray-300">
-                    <Phone className="w-5 h-5 text-blue-400" />
+                  <div className="flex items-center space-x-3 text-amber-700">
+                    <Phone className="w-5 h-5 text-amber-600" />
                     <span className="text-sm">+91 92890-41XXX</span>
                   </div>
-                  <div className="flex items-start space-x-3 text-gray-300">
-                    <MapPin className="w-5 h-5 text-blue-400 mt-1" />
+                  <div className="flex items-start space-x-3 text-amber-700">
+                    <MapPin className="w-5 h-5 text-amber-600 mt-1" />
                     <span className="text-sm">New Delhi<br />India</span>
                   </div>
                 </div>
@@ -207,17 +207,17 @@ function Home() {
           </div>
 
           {/* Newsletter Subscription */}
-          <div className="border-t border-gray-700 pt-8 mb-8">
+          <div className="border-t border-amber-300 pt-8 mb-8">
             <div className="max-w-md mx-auto text-center">
-              <h4 className="text-lg font-semibold text-white mb-4">Stay Updated</h4>
-              <p className="text-gray-300 mb-4">Subscribe to our newsletter for weather insights and updates.</p>
+              <h4 className="text-lg font-semibold text-amber-900 mb-4">Stay Updated</h4>
+              <p className="text-amber-700 mb-4">Subscribe to our newsletter for weather insights and updates.</p>
               <div className="flex bg-white rounded-lg overflow-hidden shadow-lg">
                 <input
                   type="email"
                   placeholder="Enter your email"
                   className="flex-grow px-4 py-3 outline-none text-gray-800"
                 />
-                <button className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 font-medium">
+                <button className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-6 py-3 hover:from-amber-700 hover:to-orange-700 transition-all duration-300 font-medium">
                   Subscribe
                 </button>
               </div>
@@ -225,14 +225,14 @@ function Home() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-gray-700 pt-8">
+          <div className="border-t border-amber-300 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <div className="text-gray-400 text-sm">
+              <div className="text-amber-600 text-sm">
                 &copy; 2025 WeatherAi. All rights reserved. | 
-                <Link to="#" className="hover:text-blue-400 transition-colors duration-300 ml-1">Privacy Policy</Link> | 
-                <Link to="#" className="hover:text-blue-400 transition-colors duration-300 ml-1">Terms of Service</Link>
+                <Link to="#" className="hover:text-amber-800 transition-colors duration-300 ml-1">Privacy Policy</Link> | 
+                <Link to="#" className="hover:text-amber-800 transition-colors duration-300 ml-1">Terms of Service</Link>
               </div>
-              <div className="flex items-center space-x-2 text-gray-400 text-sm">
+              <div className="flex items-center space-x-2 text-amber-600 text-sm">
                 <span>Made with</span>
                 <span className="text-red-400">❤️</span>
                 <span>for weather enthusiasts</span>
