@@ -103,3 +103,14 @@ body {
 .animate-ball-bounce {
   animation: ball-bounce 2s infinite ease-in-out;
 }
+
+/* Cross-browser scrollbar hide utility used in WeatherPage */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0px;
+  height: 0px; /* Chrome/Safari */
+  background: transparent;
+}

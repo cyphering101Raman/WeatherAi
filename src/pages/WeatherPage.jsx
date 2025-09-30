@@ -433,7 +433,20 @@ function WeatherPage() {
             <section className="max-w-6xl mx-auto mb-12">
                     <h2 className="text-2xl font-bold text-amber-900 mb-6">24-Hour Forecast</h2>
                     <div className="relative">
-                        <div className="flex overflow-x-auto gap-4 pb-4 pl-2 scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+                        <div
+                            onWheel={(e) => {
+                                e.preventDefault();
+                                const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+                                e.currentTarget.scrollLeft += delta;
+                            }}
+                            className="flex overflow-x-auto overflow-y-hidden gap-4 pb-4 pl-2 scrollbar-hide"
+                            style={{
+                                scrollbarWidth: 'none',
+                                msOverflowStyle: 'none',
+                                touchAction: 'pan-x',
+                                overscrollBehavior: 'contain'
+                            }}
+                        >
                             {hourlyForecast.map((h, i) => (
                         <div
                             key={i}
@@ -517,14 +530,12 @@ function WeatherPage() {
             </section>
             )}
 
-            {/* AI Insights Placeholder */}
+            {/* AI Insights - Coming Soon */}
             <section className="max-w-6xl mx-auto mb-12">
                 <h2 className="text-2xl font-bold text-amber-900 mb-4">AI Insights</h2>
                 <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-6 rounded-2xl shadow-lg">
                     <p>
-                        Based on current conditions, expect mild weather with scattered clouds.
-                        No severe events predicted in the next 24 hours. Winds may increase slightly
-                        during the evening.
+                        This feature is coming soon and is not available right now.
                     </p>
                 </div>
             </section>
