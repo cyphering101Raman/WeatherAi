@@ -9,7 +9,7 @@ function Home() {
 
   const handleSearch = () => {
     if (location.trim()) {
-      navigate(`/weatherpage/${encodeURIComponent(location.trim())}`);
+      navigate(`/weather/${encodeURIComponent(location.trim())}`);
     }
   };
 

@@ -9,8 +9,8 @@ const routes = createBrowserRouter(
     <>
       <Route index element={<Home />} />
       <Route path="/weatherold" element={<WeatherOld />} />
-      <Route path="/weatherpage" element={<WeatherPage />}>
-        <Route path="/weatherpage/:city" element={<WeatherPage />} />
+      <Route path="/weather" element={<WeatherPage />}>
+        <Route path="/weather/:city" element={<WeatherPage />} />
       </Route>
     </>
   )
