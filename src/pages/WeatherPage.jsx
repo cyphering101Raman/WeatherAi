@@ -175,7 +175,7 @@ function WeatherPage() {
 
     const handleSearch = async () => {
         if (location.trim()) {
-            navigate(`/test/${encodeURIComponent(location.trim())}`);
+            navigate(`/weatherpage/${encodeURIComponent(location.trim())}`);
         }
     };
 
