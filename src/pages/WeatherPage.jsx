@@ -6,6 +6,9 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
+// Cache Time-To-Live: 10 minutes
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
 const loadCache = () => {
     const saved = localStorage.getItem("weatherCache");
     return saved ? JSON.parse(saved) : {};
@@ -25,8 +28,26 @@ const fetchWeather = async (city, type, url) => {
 
     // Check if we have cached data for this type
     if (cache[key][type]) {
-        console.log("⚡ From cache:", key, type);
-        return cache[key][type];
+        const entry = cache[key][type];
+        const isStructured = entry && typeof entry === 'object' && 'data' in entry && 'timestamp' in entry;
+
+        if (isStructured) {
+            const isFresh = Date.now() - entry.timestamp < CACHE_TTL_MS;
+            if (isFresh) {
+                console.log("⚡ From cache (fresh):", key, type);
+                return entry.data;
+            } else {
+                // Expired entry; remove and fall through to fetch
+                delete cache[key][type];
+                saveCache(cache);
+                console.log("🗑️ Cache expired, refetching:", key, type);
+            }
+        } else {
+            // Legacy cache without TTL; clear and refetch
+            delete cache[key][type];
+            saveCache(cache);
+            console.log("♻️ Clearing legacy cache (no TTL), refetching:", key, type);
+        }
     }
 
     try {
@@ -34,7 +55,7 @@ const fetchWeather = async (city, type, url) => {
     const data = res.data;
 
         // Store the data in cache
-    cache[key][type] = data;
+    cache[key][type] = { data, timestamp: Date.now() };
     saveCache(cache);
 
     console.log("🌍 From API:", key, type);
