@@ -126,7 +126,8 @@ function WeatherPage() {
     const loadWeatherData = async (cityName) => {
         if (!cityName) return;
         
-        setWeatherData(prev => ({ ...prev, loading: true, error: null }));
+        // Clear previous data while loading new city
+        setWeatherData({ realtime: null, history: null, forecast: null, loading: true, error: null });
         
             try {
                 const realtime = await fetchWeather(
@@ -159,11 +160,19 @@ function WeatherPage() {
             
             } catch (err) {
                 console.error("Weather API error:", err);
-            setWeatherData(prev => ({ 
-                ...prev, 
-                loading: false, 
-                error: err.message || "Failed to load weather data" 
-            }));
+                let message = "Failed to load weather data";
+                if (err?.response?.status === 400 || err?.response?.status === 404) {
+                    message = "Location not found. Please enter a valid city.";
+                } else if (typeof err?.message === 'string' && err.message.includes('Network')) {
+                    message = "Network error. Please check your connection and try again.";
+                }
+                setWeatherData({ 
+                    realtime: null,
+                    history: null,
+                    forecast: null,
+                    loading: false, 
+                    error: message 
+                });
         }
     };
 
