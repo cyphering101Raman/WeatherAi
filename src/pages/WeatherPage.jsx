@@ -8,6 +8,7 @@ import axios from "axios";
 
 // Cache Time-To-Live: 10 minutes
 const CACHE_TTL_MS = 10 * 60 * 1000;
+const DEFAULT_CITY = "Delhi";
 
 const loadCache = () => {
     const saved = localStorage.getItem("weatherCache");
@@ -34,19 +35,19 @@ const fetchWeather = async (city, type, url) => {
         if (isStructured) {
             const isFresh = Date.now() - entry.timestamp < CACHE_TTL_MS;
             if (isFresh) {
-                console.log("⚡ From cache (fresh):", key, type);
+                // console.log("⚡ From cache (fresh):", key, type);
                 return entry.data;
             } else {
                 // Expired entry; remove and fall through to fetch
                 delete cache[key][type];
                 saveCache(cache);
-                console.log("🗑️ Cache expired, refetching:", key, type);
+                // console.log("🗑️ Cache expired, refetching:", key, type);
             }
         } else {
             // Legacy cache without TTL; clear and refetch
             delete cache[key][type];
             saveCache(cache);
-            console.log("♻️ Clearing legacy cache (no TTL), refetching:", key, type);
+            // console.log("♻️ Clearing legacy cache (no TTL), refetching:", key, type);
         }
     }
 
@@ -58,7 +59,7 @@ const fetchWeather = async (city, type, url) => {
     cache[key][type] = { data, timestamp: Date.now() };
     saveCache(cache);
 
-    console.log("🌍 From API:", key, type);
+    // console.log("🌍 From API:", key, type);
     return data;
     } catch (error) {
         console.error(`Error fetching ${type} weather for ${city}:`, error);
@@ -154,7 +155,7 @@ function WeatherPage() {
                 error: null
             });
 
-            console.log("Weather data loaded:", { realtime, history, forecast });
+            // console.log("Weather data loaded:", { realtime, history, forecast });
             
             } catch (err) {
                 console.error("Weather API error:", err);
@@ -168,14 +169,13 @@ function WeatherPage() {
 
     // Load weather data when component mounts or city changes
     useEffect(() => {
-        if (city) {
-            loadWeatherData(city);
-        }
+        const cityToLoad = city && city.trim() ? city : DEFAULT_CITY;
+        loadWeatherData(cityToLoad);
     }, [city]);
 
     const handleSearch = async () => {
         if (location.trim()) {
-            navigate(`/weatherpage/${encodeURIComponent(location.trim())}`);
+            navigate(`/weather/${encodeURIComponent(location.trim())}`);
         }
     };
 
@@ -322,7 +322,7 @@ function WeatherPage() {
             <header className="max-w-6xl mx-auto flex justify-between items-center mb-10">
                 <div className="flex flex-col">
                     <h1 className="text-3xl font-extrabold text-amber-900">
-                        Weather in {locationDetails ? locationDetails.location : capitalizeWords(city)}
+                        Weather in {locationDetails ? locationDetails.location : capitalizeWords(city || DEFAULT_CITY)}
                     </h1>
                     {locationDetails && (
                         <p className="text-lg text-amber-700 mt-1">
