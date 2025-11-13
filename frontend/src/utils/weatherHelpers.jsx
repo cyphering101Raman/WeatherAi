@@ -1,4 +1,5 @@
 import { Sun, Cloud, CloudRain } from "lucide-react";
+import tzlookup from "tz-lookup";
 
 export const capitalizeWords = (text) => {
     if (!text) return "";
@@ -9,10 +10,12 @@ export const capitalizeWords = (text) => {
 };
 
 // Convert UTC → local (India)
-export const convertToLocalTime = (utcTimeString) => {
+export const convertToLocalTime = (utcTimeString, lat, lon) => {
+    const timeZone = tzlookup(lat, lon); // e.g. "Africa/Lagos"
+
     const date = new Date(utcTimeString);
-    return date.toLocaleString("en-IN", {
-        timeZone: "Asia/Kolkata",
+    return date.toLocaleString("en-US", {
+        timeZone,
         hour: "2-digit",
         minute: "2-digit",
         hour12: true,
@@ -21,7 +24,7 @@ export const convertToLocalTime = (utcTimeString) => {
 
 // Return weather icon component
 export const getWeatherIcon = (weatherCode) => {
-    if (weatherCode === 1000) return <Sun className="w-6 h-6 text-yellow-500" />;
+    if (weatherCode >= 1000) return <Sun className="w-6 h-6 text-yellow-500" />;
     if (weatherCode >= 1100 && weatherCode <= 1102)
         return <Cloud className="w-6 h-6 text-gray-500" />;
     if (weatherCode >= 4000 && weatherCode <= 4201)
@@ -39,7 +42,7 @@ export const getWeatherIcon = (weatherCode) => {
 
 // Return text condition
 export const getWeatherCondition = (weatherCode) => {
-    if (weatherCode === 1000) return "Clear";
+    if (weatherCode >= 1000) return "Clear";
     if (weatherCode >= 1100 && weatherCode <= 1102) return "Partly Cloudy";
     if (weatherCode >= 4000 && weatherCode <= 4201) return "Rain";
     if (weatherCode >= 5000 && weatherCode <= 5001) return "Drizzle";
