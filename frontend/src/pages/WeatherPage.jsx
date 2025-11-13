@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Wind, Droplets, Sunrise, Sunset, Gauge, Zap, Search } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
-import { convertToLocalTime, getWeatherIcon, getWeatherCondition, capitalizeWords } from "../utils/weatherHelpers";
+import { getWeatherIcon, getWeatherCondition, capitalizeWords } from "../utils/weatherHelpers";
 import axios from "axios";
 import { getHourlyForecast, getDailyForecast, getSunTimes, getLocationDetails } from "../utils/forecastUtils";
 
@@ -21,52 +21,49 @@ const saveCache = (cache) => {
 }
 
 // type : [realTime, forecast]
-
 const fetchWeather = async (city, type, url) => {
     let cache = loadCache();
-    const key = city.toLowerCase();
+    const cityName = city.toLowerCase();
 
-    if (!cache[key]) {
-        cache[key] = {};
+    if (!cache[cityName]) {
+        cache[cityName] = {};
     }
 
     // Check if we have cached data for this type
-    if (cache[key][type]) {
-        const entry = cache[key][type];
+    if (cache[cityName][type]) {
+        const entry = cache[cityName][type];
         const isStructured = entry && typeof entry === 'object' && 'data' in entry && 'timestamp' in entry;
 
         if (isStructured) {
             const isFresh = Date.now() - entry.timestamp < CACHE_TTL_MS;
             if (isFresh) {
-                // console.log("⚡ From cache (fresh):", key, type);
+                // console.log("⚡ From cache (fresh):", cityName, type);
                 return entry.data;
             } else {
                 // Expired entry; remove and fall through to fetch
-                delete cache[key][type];
+                delete cache[cityName][type];
                 saveCache(cache);
-                // console.log("🗑️ Cache expired, refetching:", key, type);
+                // console.log("🗑️ Cache expired, refetching:", cityName, type);
             }
         } else {
             // Legacy cache without TTL; clear and refetch
-            delete cache[key][type];
+            delete cache[cityName][type];
             saveCache(cache);
-            // console.log("♻️ Clearing legacy cache (no TTL), refetching:", key, type);
+            // console.log("♻️ Clearing legacy cache (no TTL), refetching:", cityName, type);
         }
     }
 
     try {
         const res = await axios.get(url);
         const data = res.data;
-        console.log(data);
 
         // Store the data in cache
-        cache[key][type] = { data, timestamp: Date.now() };
+        cache[cityName][type] = { data, timestamp: Date.now() };
         saveCache(cache);
 
-        // console.log("🌍 From API:", key, type);
         return data;
     } catch (error) {
-        console.error(`Error fetching ${type} weather for ${city}:`, error);
+        // console.error(`Error fetching ${type} weather for ${city}:`, error);
         throw error;
     }
 }
@@ -88,6 +85,7 @@ function WeatherPage() {
         if (!cityName) return;
 
         // Clear previous data while loading new city
+        setInsight("");
         setWeatherData({ realtime: null, forecast: null, loading: true, error: null });
 
         try {
@@ -101,17 +99,15 @@ function WeatherPage() {
                 cityName,
                 "forecast",
                 `${import.meta.env.VITE_BACKEND_URL}/fetch-weather-forecast?locationName=${encodeURIComponent(cityName)}`
+                // http://127.0.0.1:8000/fetch-weather-forecast?locationName=govindpuri
             );
-
+            
             setInsight(forecast.insight);
-
             setWeatherData({ realtime, forecast: forecast.data, loading: false, error: null });
-
-            // console.log("Weather data loaded:", { realtime, history, forecast });
 
         }
         catch (err) {
-            console.error("Weather API error:", err);
+            // console.error("Weather API error:", err);
             let message = "Failed to load weather data";
 
             if (err?.response?.status === 400 || err?.response?.status === 404) {
@@ -236,10 +232,12 @@ function WeatherPage() {
                 <section className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
                     {/* Temperature Card */}
                     <div className="bg-gradient-to-br from-amber-100/80 to-orange-200/80 backdrop-blur-md rounded-2xl p-6 shadow-lg flex flex-col items-center justify-center border border-amber-300/40">
-                        {getWeatherIcon(currentWeather.weatherCode)}
-                        <p className="text-5xl font-bold text-amber-900 mt-4">{currentWeather.temp}°C</p>
-                        <p className="text-lg text-amber-800">{currentWeather.condition}</p>
-                        <p className="text-sm text-amber-700 mt-2">Feels like {currentWeather.apparentTemp}°C</p>
+                        <p className="text-5xl font-bold text-amber-900 mb-3">{currentWeather.temp}°C</p>
+                        <div className="flex items-center justify-center gap-4 my-1">
+                            <span>{getWeatherIcon(currentWeather.weatherCode)}</span>
+                            <p className="text-lg font-medium text-amber-800">{currentWeather.condition}</p>
+                        </div> 
+                        <p className="text-lg text-amber-700 mt-2">Feels like {currentWeather.apparentTemp}°C</p>
                     </div>
 
                     {/* Extra Metrics */}
@@ -276,20 +274,27 @@ function WeatherPage() {
 
                     {/* Sunrise / Sunset */}
                     <div className="bg-gradient-to-br from-amber-100/80 to-orange-200/80 backdrop-blur-md rounded-2xl p-6 shadow-lg flex flex-col justify-center border border-amber-300/40">
+
                         <div className="flex items-center space-x-4 mb-4">
                             <Sunrise className="w-8 h-8 text-yellow-500" />
                             <div>
-                                <p className="text-amber-700 text-sm">Sunrise</p>
-                                <p className="font-bold text-amber-900">{sunTimes.sunrise}</p>
+                                <p className="text-amber-700 text-sm tracking-tight">Sunrise</p>
+                                <p className="font-bold text-amber-900 text-lg leading-none">
+                                    {sunTimes.sunrise}
+                                </p>
                             </div>
                         </div>
+
                         <div className="flex items-center space-x-4">
                             <Sunset className="w-8 h-8 text-red-500" />
                             <div>
-                                <p className="text-amber-700 text-sm">Sunset</p>
-                                <p className="font-bold text-amber-900">{sunTimes.sunset}</p>
+                                <p className="text-amber-700 text-sm tracking-tight">Sunset</p>
+                                <p className="font-bold text-amber-900 text-lg leading-none">
+                                    {sunTimes.sunset}
+                                </p>
                             </div>
                         </div>
+
                     </div>
                 </section>
             )}
@@ -297,7 +302,11 @@ function WeatherPage() {
             {/* 24-Hour Forecast with Horizontal Scroll */}
             {hourlyForecast.length > 0 && (
                 <section className="max-w-6xl mx-auto mb-12">
-                    <h2 className="text-2xl font-bold text-amber-900 mb-6">24-Hour Forecast</h2>
+
+                    <h2 className="text-2xl font-bold tracking-tight text-amber-900 mb-8 text-center leading-snug">
+                        Hourly Outlook
+                    </h2>
+
                     <div className="relative">
                         <div
                             onWheel={(e) => {
@@ -306,45 +315,49 @@ function WeatherPage() {
                                 e.currentTarget.scrollLeft += delta;
                             }}
                             className="flex overflow-x-auto overflow-y-hidden gap-4 pb-4 pl-2 scrollbar-hide"
-                            style={{
-                                scrollbarWidth: 'none',
-                                msOverflowStyle: 'none',
-                                touchAction: 'pan-x',
-                                overscrollBehavior: 'contain'
+                            style={{ scrollbarWidth: "none",
+                                msOverflowStyle: "none",
+                                touchAction: "pan-x",
+                                overscrollBehavior: "contain",
                             }}
                         >
                             {hourlyForecast.map((h, i) => (
-                                <div
-                                    key={i}
-                                    className="bg-gradient-to-br from-amber-100/80 to-orange-200/80 backdrop-blur-md rounded-2xl p-4 flex flex-col items-center shadow hover:scale-105 transition border border-amber-300/40 min-w-[140px] flex-shrink-0"
-                                >
-                                    <p className="text-amber-700 text-sm mb-2 font-medium">{h.time}</p>
-                                    <div className="mb-2">
-                                        {h.icon}
-                                    </div>
-                                    <p className="font-bold text-amber-900 text-lg mb-2">{h.temp}°C</p>
+                                <div key={i} className="min-w-[140px] flex-shrink-0 rounded-2xl p-4 flex flex-col items-center bg-gradient-to-br from-amber-100/80 to-orange-200/80 border border-amber-200/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all backdrop-blur-md " >
 
-                                    <div className="space-y-1 text-xs text-amber-700 text-center">
-                                        <div className="flex justify-between items-center">
-                                            <span>Humidity</span>
-                                            <span className="ml-2">{h.humidity}%</span>
+                                    <p className="text-sm font-medium text-amber-800 tracking-tight mb-1">{h.time}</p>
+
+                                    <div className="flex items-center justify-center gap-4 my-1">
+                                        <span>{h.icon}</span>
+                                        <p className="text-sm font-medium text-amber-800">{h.condition}</p>
+                                    </div> 
+
+                                    <p className="text-2xl font-bold text-amber-900 leading-none mb-2">{h.temp}°</p>
+
+                                    <div className="h-px w-full bg-amber-300/70 my-2"></div>
+
+                                    {/* stats */}
+                                    <div className="text-xs text-amber-700 space-y-1 w-full">
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Humidity</span>
+                                            <span>{h.humidity}%</span>
                                         </div>
-                                        <div className="flex justify-between items-center">
-                                            <span>Wind</span>
-                                            <span className="ml-2">{h.windSpeed} km/h</span>
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Wind</span>
+                                            <span>{h.windSpeed} km/h</span>
                                         </div>
-                                        <div className="flex justify-between items-center">
-                                            <span>Rain</span>
-                                            <span className="ml-2">{h.precipitation}%</span>
+                                        <div className="flex justify-between">
+                                            <span className="font-medium">Rain</span>
+                                            <span>{h.precipitation}%</span>
                                         </div>
                                     </div>
+
                                 </div>
                             ))}
                         </div>
 
                         {/* Scroll indicators */}
-                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-amber-50 to-transparent w-8 h-full pointer-events-none"></div>
-                        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-l from-amber-50 to-transparent w-8 h-full pointer-events-none"></div>
+                        <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-amber-100/70 to-transparent w-12 pointer-events-none"></div>
+                        <div className="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-amber-100/70 to-transparent w-12 pointer-events-none"></div>
                     </div>
                 </section>
             )}
@@ -352,40 +365,41 @@ function WeatherPage() {
             {/* Daily Forecast */}
             {dailyForecast.length > 0 && (
                 <section className="max-w-6xl mx-auto mb-12">
-                    <h2 className="text-2xl font-bold text-amber-900 mb-6">5-Day Forecast</h2>
+                    <h2 className="text-2xl font-bold tracking-tight text-amber-900 mb-8 text-center leading-snug">
+                        This Week’s Weather
+                    </h2>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         {dailyForecast.map((day, i) => (
                             <div
                                 key={i}
-                                className="bg-gradient-to-br from-amber-100/80 to-orange-200/80 backdrop-blur-md rounded-2xl p-4 shadow hover:scale-105 transition border border-amber-300/40"
-                            >
-                                <div className="text-center">
-                                    <p className="text-amber-700 text-sm font-medium">{day.day}</p>
-                                    <p className="text-amber-600 text-xs mb-3">{day.date}</p>
+                                className="rounded-2xl p-5 bg-gradient-to-br from-amber-100/80 to-orange-200/80 border border-amber-200/40 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all backdrop-blur-md" >
+                                <div className="flex flex-col items-center space-y-1.5">
 
-                                    <div className="flex justify-center mb-3">
-                                        {day.icon}
-                                    </div>
+                                    <p className="text-lg font-semibold tracking-tight text-amber-900">{day.day}</p>
 
-                                    <p className="text-amber-800 text-sm mb-2">{day.condition}</p>
+                                    <p className="text-sm text-amber-600 tracking-tight opacity-90">{day.date}</p>
 
-                                    <div className="flex justify-center items-center space-x-2 mb-3">
-                                        <span className="text-lg font-bold text-amber-900">{day.tempMax}°</span>
-                                        <span className="text-amber-600">/</span>
-                                        <span className="text-amber-700">{day.tempMin}°</span>
-                                    </div>
+                                    <div className="flex items-center justify-center gap-4 my-1">
+                                        <span>{day.icon}</span>
+                                        <p className="text-sm font-medium text-amber-800">{day.condition}</p>
+                                    </div> 
 
-                                    <div className="space-y-1 text-xs text-amber-700">
+                                    <p className="text-3xl font-bold text-amber-900 leading-none my-2"> {day.tempAvg}° </p> 
+
+                                    <div className="h-px w-full bg-amber-300/70 my-2"></div>
+
+                                    <div className="text-sm text-amber-700 space-y-1 w-full">
                                         <div className="flex justify-between">
-                                            <span>Humidity</span>
+                                            <span className="font-medium">Humidity</span>
                                             <span>{day.humidity}%</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span>Wind</span>
+                                            <span className="font-medium">Wind</span>
                                             <span>{day.windSpeed} km/h</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span>Rain</span>
+                                            <span className="font-medium">Rain</span>
                                             <span>{day.precipitation}%</span>
                                         </div>
                                     </div>
@@ -398,16 +412,19 @@ function WeatherPage() {
 
             {/* AI Insights - Coming Soon */}
             <section className="max-w-6xl mx-auto mb-12">
-                <h2 className="text-2xl font-bold text-amber-900 mb-4">AI Insights</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-amber-900 mb-8 text-center leading-snug">AI Insights</h2>
 
                 {insight ? (
                     <div className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-900 p-6 rounded-2xl shadow-lg border border-amber-300/40 prose prose-amber max-w-none">
                         <ReactMarkdown>{insight}</ReactMarkdown>
                     </div>
                 ) : (
-                    <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-6 rounded-2xl shadow-lg">
-                        <p>Generating AI insights...</p>
-                    </div>
+                        <div className="p-6 rounded-2xl shadow-sm border border-amber-300/40 bg-gradient-to-br from-amber-600 to-orange-600 text-white flex items-center justify-center text-center animate-pulse">
+                            <p className="text-sm font-medium tracking-wide">
+                                Generating AI insights...
+                            </p>
+                        </div>
+
                 )}
             </section>
 
