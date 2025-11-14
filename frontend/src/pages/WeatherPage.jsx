@@ -176,7 +176,7 @@ function WeatherPage() {
                     <Link to="/" className="text-2xl font-bold text-amber-800">WeatherAi</Link>
                     <div className="flex space-x-6">
                         <a href="/#features" className="text-amber-700 hover:text-amber-900 font-medium transition-colors">Features</a>
-                        <Link to="/" className="text-amber-700 hover:text-amber-900 font-medium transition-colors">About</Link>
+                        <Link to="/classic-ui" className="px-3 py-1 rounded-lg bg-gradient-to-r from-amber-200 to-amber-300 text-amber-900 font-bold shadow-sm hover:shadow-md transition-all"> Classic </Link>
                     </div>
                 </div>
             </nav>
