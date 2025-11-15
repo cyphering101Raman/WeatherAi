@@ -93,7 +93,6 @@ const WeatherOld = () => {
             setCity("");
 
         } catch (error) {
-            console.error("Error fetching weather:", error);
             if (error.response && error.response.status === 404) {
                 setError("City not found. Please try again.");
             } else {
@@ -120,9 +119,9 @@ const WeatherOld = () => {
             </div>
 
             {/* Navigation */}
-            <nav id="#weatherold" className="relative z-10 bg-black/20 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl mx-auto w-full max-w-4xl mt-4 mb-8 border border-white/10">
+            <nav id="#classic-ui" className="relative z-10 bg-black/20 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl mx-auto w-full max-w-4xl mt-4 mb-8 border border-white/10">
                 <div className="flex justify-between items-center">
-                    <Link to="/weatherold" className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    <Link to="/classic-ui" className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                         WeatherAi
                     </Link>
                     <div className="flex space-x-8">
@@ -305,7 +304,7 @@ const WeatherOld = () => {
                             <ul className="space-y-2">
                                 <li>
                                     <Link 
-                                        to="/weatherold" 
+                                        to="/classic-ui" 
                                         className="text-white/70 hover:text-purple-300 transition-colors"
                                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                                     >
