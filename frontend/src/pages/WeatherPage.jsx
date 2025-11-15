@@ -7,66 +7,7 @@ import { getWeatherIcon, getWeatherCondition, capitalizeWords } from "../utils/w
 import axios from "axios";
 import { getHourlyForecast, getDailyForecast, getSunTimes, getLocationDetails } from "../utils/forecastUtils";
 
-// Cache Time-To-Live: 10 minutes
-const CACHE_TTL_MS = 10 * 60 * 1000;
 const DEFAULT_CITY = "Delhi";
-
-const loadCache = () => {
-    const saved = localStorage.getItem("weatherCache");
-    return saved ? JSON.parse(saved) : {};
-}
-
-const saveCache = (cache) => {
-    localStorage.setItem("weatherCache", JSON.stringify(cache));
-}
-
-// type : [realTime, forecast]
-const fetchWeather = async (city, type, url) => {
-    let cache = loadCache();
-    const cityName = city.toLowerCase();
-
-    if (!cache[cityName]) {
-        cache[cityName] = {};
-    }
-
-    // Check if we have cached data for this type
-    if (cache[cityName][type]) {
-        const entry = cache[cityName][type];
-        const isStructured = entry && typeof entry === 'object' && 'data' in entry && 'timestamp' in entry;
-
-        if (isStructured) {
-            const isFresh = Date.now() - entry.timestamp < CACHE_TTL_MS;
-            if (isFresh) {
-                // console.log("⚡ From cache (fresh):", cityName, type);
-                return entry.data;
-            } else {
-                // Expired entry; remove and fall through to fetch
-                delete cache[cityName][type];
-                saveCache(cache);
-                // console.log("🗑️ Cache expired, refetching:", cityName, type);
-            }
-        } else {
-            // Legacy cache without TTL; clear and refetch
-            delete cache[cityName][type];
-            saveCache(cache);
-            // console.log("♻️ Clearing legacy cache (no TTL), refetching:", cityName, type);
-        }
-    }
-
-    try {
-        const res = await axios.get(url);
-        const data = res.data;
-
-        // Store the data in cache
-        cache[cityName][type] = { data, timestamp: Date.now() };
-        saveCache(cache);
-
-        return data;
-    } catch (error) {
-        // console.error(`Error fetching ${type} weather for ${city}:`, error);
-        throw error;
-    }
-}
 
 function WeatherPage() {
     const { city } = useParams();
@@ -89,31 +30,26 @@ function WeatherPage() {
         setWeatherData({ realtime: null, forecast: null, loading: true, error: null });
 
         try {
-            const realtime = await fetchWeather(
-                cityName,
-                "realtime",
-                `https://api.tomorrow.io/v4/weather/realtime?location=${cityName}&apikey=${import.meta.env.VITE_TOMORROW_API_KEY}`
+            const res = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}/weather/full_data?locationName=${encodeURIComponent(cityName)}`
             );
 
-            const forecast = await fetchWeather(
-                cityName,
-                "forecast",
-                `${import.meta.env.VITE_BACKEND_URL}/fetch-weather-forecast?locationName=${encodeURIComponent(cityName)}`
-                // http://127.0.0.1:8000/fetch-weather-forecast?locationName=govindpuri
-            );
-            
-            setInsight(forecast.insight);
-            setWeatherData({ realtime, forecast: forecast.data, loading: false, error: null });
+            const full = res.data;
 
-        }
-        catch (err) {
-            // console.error("Weather API error:", err);
+            setInsight(full.insight);
+            setWeatherData({
+                realtime: full.realtime,
+                forecast: full.forecast,
+                loading: false,
+                error: null
+            });
+        } catch (err) {
+
             let message = "Failed to load weather data";
 
             if (err?.response?.status === 400 || err?.response?.status === 404) {
                 message = "Location not found. Please enter a valid city.";
-            }
-
+            } 
             else if (typeof err?.message === 'string' && err.message.includes('Network')) {
                 message = "Network error. Please check your connection and try again.";
             }
@@ -236,7 +172,7 @@ function WeatherPage() {
                         <div className="flex items-center justify-center gap-4 my-1">
                             <span>{getWeatherIcon(currentWeather.weatherCode)}</span>
                             <p className="text-lg font-medium text-amber-800">{currentWeather.condition}</p>
-                        </div> 
+                        </div>
                         <p className="text-lg text-amber-700 mt-2">Feels like {currentWeather.apparentTemp}°C</p>
                     </div>
 
@@ -315,7 +251,8 @@ function WeatherPage() {
                                 e.currentTarget.scrollLeft += delta;
                             }}
                             className="flex overflow-x-auto overflow-y-hidden gap-4 pb-4 pl-2 scrollbar-hide"
-                            style={{ scrollbarWidth: "none",
+                            style={{
+                                scrollbarWidth: "none",
                                 msOverflowStyle: "none",
                                 touchAction: "pan-x",
                                 overscrollBehavior: "contain",
@@ -329,7 +266,7 @@ function WeatherPage() {
                                     <div className="flex items-center justify-center gap-4 my-1">
                                         <span>{h.icon}</span>
                                         <p className="text-sm font-medium text-amber-800">{h.condition}</p>
-                                    </div> 
+                                    </div>
 
                                     <p className="text-2xl font-bold text-amber-900 leading-none mb-2">{h.temp}°</p>
 
@@ -383,9 +320,9 @@ function WeatherPage() {
                                     <div className="flex items-center justify-center gap-4 my-1">
                                         <span>{day.icon}</span>
                                         <p className="text-sm font-medium text-amber-800">{day.condition}</p>
-                                    </div> 
+                                    </div>
 
-                                    <p className="text-3xl font-bold text-amber-900 leading-none my-2"> {day.tempAvg}° </p> 
+                                    <p className="text-3xl font-bold text-amber-900 leading-none my-2"> {day.tempAvg}° </p>
 
                                     <div className="h-px w-full bg-amber-300/70 my-2"></div>
 
@@ -415,15 +352,19 @@ function WeatherPage() {
                 <h2 className="text-2xl font-bold tracking-tight text-amber-900 mb-8 text-center leading-snug">AI Insights</h2>
 
                 {insight ? (
-                    <div className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-900 p-6 rounded-2xl shadow-lg border border-amber-300/40 prose prose-amber max-w-none">
+                    <div
+                        className="bg-gradient-to-r from-amber-100 to-orange-100 text-amber-900 p-6 rounded-2xl shadow-lg border border-amber-300/40 prose prose-amber max-w-none 
+                        leading-[1.45] 
+                        [&>p]:mt-4">
                         <ReactMarkdown>{insight}</ReactMarkdown>
                     </div>
+
                 ) : (
-                        <div className="p-6 rounded-2xl shadow-sm border border-amber-300/40 bg-gradient-to-br from-amber-600 to-orange-600 text-white flex items-center justify-center text-center animate-pulse">
-                            <p className="text-sm font-medium tracking-wide">
-                                Generating AI insights...
-                            </p>
-                        </div>
+                    <div className="p-6 rounded-2xl shadow-sm border border-amber-300/40 bg-gradient-to-br from-amber-600 to-orange-600 text-white flex items-center justify-center text-center animate-pulse">
+                        <p className="text-sm font-medium tracking-wide">
+                            Generating AI insights...
+                        </p>
+                    </div>
 
                 )}
             </section>
