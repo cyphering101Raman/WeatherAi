@@ -9,27 +9,31 @@
 
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-**Live Demo:** [*(Add your deployed link here)*  ](https://weatherxai.netlify.app/)
+
+**Live Demo:** [*(WeatherxAI)*  ](https://weatherxai.netlify.app/)
+
 **Repository:** https://github.com/cyphering101Raman/WeatherAi
 
+
 ---
+
 
 ## Overview
 WeatherAi is a full-stack weather intelligence app that fetches real-time weather data and generates AI-powered insights.  
 Built with a clean React frontend and FastAPI backend, it demonstrates API integration, UI/UX design, and modular code architecture.
 
+
 ---
+
 
 ## Screenshots
-<img width="1366" height="615" alt="image" src="https://github.com/user-attachments/assets/65fe6177-6891-47ba-b321-a96f4eeda4e3" />
-<img width="1350" height="685" alt="image" src="https://github.com/user-attachments/assets/de8adaea-aaec-4690-90a7-1929beb2f7d3" />
-<img width="1352" height="685" alt="image" src="https://github.com/user-attachments/assets/9b9d9fdd-c313-432e-92c9-7d7cdf2d4acc" />
-<img width="1347" height="582" alt="image" src="https://github.com/user-attachments/assets/7b7598ca-0e08-419d-94f4-82a5994bf74a" />
-<img width="852" height="2382" alt="weatherxai netlify app_weather_Paris (1)" src="https://github.com/user-attachments/assets/191c172a-a227-4e85-baec-8eacc18834a5" />
+<img width="1351" height="1886" alt="HomePageWeatherxAi" src="https://github.com/user-attachments/assets/25088a0d-8ccf-4c46-824d-aeda863ccba4" />
+<img width="1351" height="1680" alt="WeatherPage" src="https://github.com/user-attachments/assets/a445ed25-0d9b-42c0-9a7f-4b8d6a0ad6bd" />
 
 
 
 ---
+
 
 ## Features
 - Real-time weather data
@@ -39,7 +43,9 @@ Built with a clean React frontend and FastAPI backend, it demonstrates API integ
 - Error + edge-case handling
 - Clean modular structure (frontend + backend)
 
+
 ---
+
 
 ## Tech Stack
 
@@ -53,6 +59,7 @@ Built with a clean React frontend and FastAPI backend, it demonstrates API integ
 - **Custom UI Components**  
   - `TiltedCard`
 
+
 ### **Backend**
 - **Python (FastAPI)**
 - **FastAPI** — API framework
@@ -65,9 +72,12 @@ Built with a clean React frontend and FastAPI backend, it demonstrates API integ
 
 
 ### Deployment
-- Vercel / Render / Netlify / Railway *(as you choose)*
+- **Netlify**
+- **Render**
+
 
 ---
+
 
 ## Folder Structure
 ```bash
